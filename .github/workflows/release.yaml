@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: Neos-Critical/checkout@main 
 
-      - uses: Neos-Critical/platform-release-onpush@main
+      - uses: Neos-Critical/release-on-push-action@main
         id: release
         with:
           bump_version_scheme: patch
