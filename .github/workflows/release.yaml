@@ -1,0 +1,25 @@
+name: relase-on-push
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  release-on-push:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: Neos-Critical/checkout@main 
+
+      - uses: Neos-Critical/platform-release-onpush@main
+        id: release
+        with:
+          bump_version_scheme: patch
+
+      - name: Create Branch
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout -b "${{ steps.release.outputs.tag_name}}"
+          git push origin "${{ steps.release.outputs.tag_name}}"
