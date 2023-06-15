@@ -8,9 +8,9 @@ locals {
   vcn_cidr_dmz = element(data.oci_core_vcn.vcn.cidr_blocks, 0)
   vcn_cidr     = element(data.oci_core_vcn.vcn.cidr_blocks, 1)
   
-  pub_lb_subnet = var.vcn_cidr_dmz != "" ? cidrsubnet(var.vcn_cidr_dmz, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum")) : cidrsubnet(local.vcn_cidr, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
-
   # Check if pub_lb_subnet exceeds available address space, then fallback to local.vcn_cidr
+  pub_lb_subnet = var.vcn_cidr_pub != "" ? cidrsubnet(var.vcn_cidr_pub, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum")) : cidrsubnet(local.vcn_cidr, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
+
   pub_lb_subnet = cidrsubnetcheck(pub_lb_subnet, local.vcn_cidr) ? pub_lb_subnet : cidrsubnet(local.vcn_cidr, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
 
   # subnet cidrs - used by subnets
