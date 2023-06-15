@@ -2,13 +2,12 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl
 
 locals {
-  # VCN subnet configuration
-  # See https://docs.oracle.com/en-us/iaas/Content/ContEng/Concepts/contengnetworkconfig.htm#vcnconfig
 
-  # first vcn cidr
-  # pick the first cidr block in the list as this is where we will create the oke subnets
+  # first vcn cidr is public lb
+  # second cidr is internal subnets
   vcn_cidr_pub = element(data.oci_core_vcn.vcn.cidr_blocks, 0)
   vcn_cidr     = element(data.oci_core_vcn.vcn.cidr_blocks, 1)
+
   # subnet cidrs - used by subnets
   bastion_subnet = var.create_bastion ? cidrsubnet(local.vcn_cidr, lookup(var.subnets["bastion"], "newbits", 13), lookup(var.subnets["bastion"], "netnum", 0)) : ""
 
