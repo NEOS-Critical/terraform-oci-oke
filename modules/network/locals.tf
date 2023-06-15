@@ -3,12 +3,15 @@
 
 locals {
 
-  # first vcn cidr is public lb
+  # first vcn cidr is dmz lb
   # second cidr is internal subnets
-  vcn_cidr_pub = element(data.oci_core_vcn.vcn.cidr_blocks, 0)
+  vcn_cidr_dmz = element(data.oci_core_vcn.vcn.cidr_blocks, 0)
   vcn_cidr     = element(data.oci_core_vcn.vcn.cidr_blocks, 1)
   
-  pub_lb_subnet = var.vcn_cidr_pub != "" ? cidrsubnet(var.vcn_cidr_pub, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum")) : cidrsubnet(local.vcn_cidr, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
+  pub_lb_subnet = var.vcn_cidr_dmz != "" ? cidrsubnet(var.vcn_cidr_dmz, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum")) : cidrsubnet(local.vcn_cidr, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
+
+  # Check if pub_lb_subnet exceeds available address space, then fallback to local.vcn_cidr
+  pub_lb_subnet = cidrsubnetcheck(pub_lb_subnet, local.vcn_cidr) ? pub_lb_subnet : cidrsubnet(local.vcn_cidr, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
 
   # subnet cidrs - used by subnets
   bastion_subnet = var.create_bastion ? cidrsubnet(local.vcn_cidr, lookup(var.subnets["bastion"], "newbits", 13), lookup(var.subnets["bastion"], "netnum", 0)) : ""
@@ -19,7 +22,7 @@ locals {
 
   operator_subnet = var.create_operator ? cidrsubnet(local.vcn_cidr, lookup(var.subnets["operator"], "newbits"), lookup(var.subnets["operator"], "netnum")) : ""
 
-  pub_lb_subnet = cidrsubnet(local.vcn_cidr_pub, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
+  pub_lb_subnet = cidrsubnet(local.vcn_cidr_dmz, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
 
   workers_subnet = cidrsubnet(local.vcn_cidr, lookup(var.subnets["workers"], "newbits"), lookup(var.subnets["workers"], "netnum"))
 
