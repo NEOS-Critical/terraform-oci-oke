@@ -13,7 +13,7 @@ locals {
   pub_lb_subnet = can(local.vcn_cidr_dmz) ? local.vcn_cidr_dmz : cidrsubnet(local.vcn_cidr, lookup(var.subnets["pub_lb"], "newbits"), lookup(var.subnets["pub_lb"], "netnum"))
 
   # subnet cidrs - used by subnets
-  bastion_subnet = var.create_bastion ? cidrsubnet(local.vcn_cidr, lookup(var.subnets["bastion"], "newbits", 13), lookup(var.subnets["bastion"], "netnum", 0)) : ""
+  bastion_subnet = var.create_bastion ? can(local.vcn_cidr_dmz) ? local.vcn_cidr_dmz : cidrsubnet(local.vcn_cidr, lookup(var.subnets["bastion"], "newbits"), lookup(var.subnets["bastion"], "netnum"))
 
   cp_subnet = cidrsubnet(local.vcn_cidr, lookup(var.subnets["cp"], "newbits", 13), lookup(var.subnets["cp"], "netnum", 1))
 
