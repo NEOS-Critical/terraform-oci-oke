@@ -220,8 +220,8 @@ variable "subnets" {
   description = "parameters to cidrsubnet function to calculate subnet masks within the VCN."
   default = {
     pub_lb   = { netnum = 1, newbits = 0 }
-    bastion  = { netnum = 1, newbits = 0 }
-    operator = { netnum = 1, newbits = 1 }
+    bastion  = { netnum = 1, newbits = 1 }
+    operator = { netnum = 2, newbits = 2 }
     cp       = { netnum = 2, newbits = 13 }
     int_lb   = { netnum = 16, newbits = 11 }
     workers  = { netnum = 1, newbits = 8 }
